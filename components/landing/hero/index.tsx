@@ -134,7 +134,7 @@ const Hero = () => {
         w-full resize-none px-4 py-3 text-sm
         bg-zinc-900/50 border border-white/10
         rounded-xl text-zinc-200
-        focus:outline-none focus:ring-2 focus:ring-indigo-500/40
+        focus:outline-none focus:ring-2 focus:ring-blue-500/40
       "
                   />
                   <button className="w-12 h-11 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-500 cursor-pointer">
