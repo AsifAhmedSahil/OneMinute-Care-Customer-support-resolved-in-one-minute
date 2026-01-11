@@ -1,11 +1,13 @@
+import Navbar from '@/components/landing/nav'
 import React from 'react'
 
-const page = () => {
+const Page = () => {
   return (
-    <div>
+    <div className='w-full flex flex-col relative z-10'>
+      <Navbar/>
       
     </div>
   )
 }
 
-export default page
+export default Page
