@@ -12,8 +12,7 @@ const Integration = () => {
             Drop-in simplicity
           </h2>
           <p className="text-lg text-zinc-400 font-light mb-8 leading-relaxed">
-            No complex SDKs or user syncing. Just add our script tag and
-            you&apos;re live. We inherit your CSS variable automatically.
+             No complex queries. No SQL editors. Just connect and ask.
           </p>
 
           <div className="flex flex-col gap-4">
@@ -21,7 +20,7 @@ const Integration = () => {
               <div className="w-6 h-6 rounded-full bg-zinc-900 border border-zinc-700 flex items-center justify-center text-[10px] text-zinc-300">
                 1
               </div>
-              Scan your documentation URL
+              Connect your database
             </div>
 
             <div className="w-px h-4 ml-3 bg-zinc-600"></div>
@@ -29,7 +28,7 @@ const Integration = () => {
               <div className="w-6 h-6 rounded-full bg-zinc-900 border border-zinc-700 flex items-center justify-center text-[10px] text-zinc-300">
                 2
               </div>
-              Copy the embed snippet
+             Define allowed tables
             </div>
 
             <div className="w-px h-4 ml-3 bg-zinc-600"></div>
@@ -37,7 +36,7 @@ const Integration = () => {
               <div className="w-6 h-6 rounded-full bg-zinc-900 border border-zinc-700 flex items-center justify-center text-[10px] text-zinc-300">
                 3
               </div>
-              Auto0resolve tickets
+             Start chatting with your data
             </div>
 
            

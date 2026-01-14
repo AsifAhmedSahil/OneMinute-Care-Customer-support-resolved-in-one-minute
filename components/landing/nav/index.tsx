@@ -2,9 +2,8 @@ import { isAuthorized } from "@/lib/isAuthorized";
 import Link from "next/link";
 import React from "react";
 
-const Navbar = async() => {
-
-  const user = await isAuthorized()
+const Navbar = async () => {
+  const user = await isAuthorized();
 
   return (
     <nav className="fixed top-0 inset-x-0 z-50 transition-all duration-300 backdrop-blur-sm border-b border-white/5 bg-[#050509]/50 ">
@@ -39,28 +38,30 @@ const Navbar = async() => {
           </Link>
         </div>
 
-
         <div className="flex items-center gap-4">
-           {
-  user ? (
-    <Link href={"/dashboard"} className="h-10 px-4 rounded-xl bg-white text-black  transition-colors font-medium flex items-center hover:bg-zinc-300 text-sm">
-    Dashboard
-    </Link>
-  ) :
-  (
-    <>
-    <Link href={"/api/auth"} className="text-xs font-medium text-zinc-400 hover:text-white transition-colors">
-            Sign In 
-            
+          {user ? (
+            <Link
+              href={"/dashboard"}
+              className="h-10 px-4 rounded-xl bg-white text-black  transition-colors font-medium flex items-center hover:bg-zinc-300 text-sm"
+            >
+              Dashboard
             </Link>
-            <Link href={"/api/auth"} className="text-xs font-medium bg-white text-black px-4 py-2 rounded-full hover:bg-zinc-200 transition-colors">
-            Get Started
-            
-            </Link>
-    </>
-  )
-}
-
+          ) : (
+            <>
+              <Link
+                href={"/api/auth"}
+                className="text-xs font-medium text-zinc-400 hover:text-white transition-colors"
+              >
+                Sign In
+              </Link>
+              <Link
+                href={"/api/auth"}
+                className="text-xs font-medium bg-white text-black px-4 py-2 rounded-full hover:bg-zinc-200 transition-colors"
+              >
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>
