@@ -1,3 +1,4 @@
+import Sidebar from "@/components/dashboard/sidebar";
 import { Metadata } from "next";
 import { cookies } from "next/headers";
 
@@ -20,7 +21,16 @@ export default async function DashboardLayout({
             {
                 metadataCookie?.value ? 
                 <>
-                {children}
+               <Sidebar/>
+               <div className="flex-1 flex flex-col md:ml-64 relative min-h-screen transition-all duration-300">
+                {/* header */}
+                <header>
+                  <main className="flex-1">
+                    {children}
+                  </main>
+                </header>
+
+               </div>
                 </>
                 :
                 children
