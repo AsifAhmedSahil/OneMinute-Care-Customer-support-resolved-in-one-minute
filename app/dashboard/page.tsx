@@ -1,5 +1,6 @@
 'use client'
-import InitialForm from "@/components/dashboard/InitialForm";
+
+import InitialForm from "@/components/dashboard/initialForm";
 import { useEffect, useState } from "react";
 
 const page = () => {
