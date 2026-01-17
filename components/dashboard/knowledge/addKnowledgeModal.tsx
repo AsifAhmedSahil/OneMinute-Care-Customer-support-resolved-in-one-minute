@@ -69,8 +69,45 @@ const AddKnowledgeModal = ({
         return 
       }
 
-      const normalizedInpuyt = websiteUrl.replace()
+      const normalizedInput = websiteUrl.replace(/\/$/,"")
+      const exists = existingSources.some((source) => {
+        if(source.type !== "website" || !source.source_url) return false;
+        const normalizedSource = source.source_url.replace(/\/$/,"");
+        return normalizedSource === normalizedInput
+      })
+
+      if(exists){
+        setError("the website is already in your knowledge base.")
+        return;
+      }
+
+      data.url = websiteUrl;
+    } else if(defaultTab === "text"){
+      if(!docsTitle.trim()){
+        setError("Please enter a title.")
+        return 
+      }
+      if(!docsContent.trim()){
+        setError("Please provide content")
+        return 
+      }
+      data.title = docsTitle;
+      data.content = docsContent;
+    } else if(defaultTab === "file"){
+      if(!uploadedFile){
+        setError("Please select a file a upload.")
+        return 
+      }
+      data.file = uploadedFile;
     }
+
+    await onImport(data);
+
+    setWebsiteUrl("")
+    setDocsTitle("")
+    setDocsContent("")
+    setUploadedFile(null)
+    setError(null)
 
   }
 
