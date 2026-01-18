@@ -1,5 +1,6 @@
 "use client";
 import AddKnowledgeModal from "@/components/dashboard/knowledge/addKnowledgeModal";
+import KnowledgeTable from "@/components/dashboard/knowledge/KnowledgeTable";
 import QuickActions from "@/components/dashboard/knowledge/quickActions";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
@@ -11,8 +12,12 @@ const page = () => {
   const [knowledgeStoringLoader, setKnowledgeStoringLoader] = useState(false);
   const [knowledgeSourcesLoader, setKnowledgeSourcesLoader] = useState(true);
   const [knowledgeSources, setKnowledgeSources] = useState<KnowledgeSource[]>(
-    []
+    [],
   );
+
+  const [selectedSource,setSelectedSource] = useState<KnowledgeSource | null>(null)
+  const [isSheetOpen,setIsSheetOpen] = useState(false);
+
 
   const openModal = (tab: string) => {
     setDefaultTab(tab);
@@ -47,13 +52,19 @@ const page = () => {
       const res = await fetch("/api/knowledge/fetch");
       const newData = await res.json();
       setKnowledgeSources(newData.sources);
-      setIsAddOpen(false)
+      setIsAddOpen(false);
     } catch (error) {
-      console.error(error)
-    } finally{
+      console.error(error);
+    } finally {
       setKnowledgeSourcesLoader(false);
     }
   };
+
+const handleSourceClick = (source: KnowledgeSource) => {
+  setSelectedSource(source);
+  setIsSheetOpen(true);
+};
+
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -83,6 +94,12 @@ const page = () => {
       {/* quick action */}
 
       <QuickActions onOpenModal={openModal} />
+
+      <KnowledgeTable
+        sources={knowledgeSources}
+        onSourceClick={handleSourceClick}
+        isLoading={knowledgeSourcesLoader}
+      />
 
       <AddKnowledgeModal
         isOpen={isAddOpen}
