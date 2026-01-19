@@ -2,9 +2,10 @@
 import AddKnowledgeModal from "@/components/dashboard/knowledge/addKnowledgeModal";
 import KnowledgeTable from "@/components/dashboard/knowledge/KnowledgeTable";
 import QuickActions from "@/components/dashboard/knowledge/quickActions";
+import SourceDetailsSheet from "@/components/dashboard/knowledge/sourceDetailsSheet";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const page = () => {
   const [defaultTab, setDefaultTab] = useState("website");
@@ -23,6 +24,16 @@ const page = () => {
     setDefaultTab(tab);
     setIsAddOpen(true);
   };
+
+  useEffect(()=>{
+    const fetchKnowledgeSources  =async() =>{
+      const res = await fetch("/api/knowledge/fetch");
+      const data = await res.json()
+      setKnowledgeSources(data.sources);
+      setKnowledgeSourcesLoader(false)
+    }
+    fetchKnowledgeSources()
+  },[])
 
   const handleImportSource = async (data: any) => {
     setKnowledgeStoringLoader(true);
@@ -109,6 +120,12 @@ const handleSourceClick = (source: KnowledgeSource) => {
         onImport={handleImportSource}
         isLoading={knowledgeStoringLoader}
         existingSources={knowledgeSources}
+      />
+
+      <SourceDetailsSheet 
+      isOpen={isSheetOpen}
+      setIsOpen={setIsSheetOpen}
+      selectedSource={selectedSource}
       />
     </div>
   );
