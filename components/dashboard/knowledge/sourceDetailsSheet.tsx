@@ -50,6 +50,7 @@ const SourceDetailsSheet = ({
                     Content Preview
                 </h4>
                 <div className="p-4 rounded-lg border border-white/5 bg-black/40 font-mono text-xs text-zinc-400 h-72 overflow-y-auto leading-relaxed">
+                
                     {selectedSource.content || `# ${selectedSource.name}\n\n(No content preview avaiable)`}
                 </div>
 

@@ -13,3 +13,12 @@ interface KnowledgeSource {
     last_updated:string|null;
     created_at:string|null;
 }
+
+interface FormData {
+  name: string;
+  description: string;
+  tone: Tone;
+  allowedTopics: string;
+  blockedTopics: string;
+  fallbackBehaviour: string;
+}
