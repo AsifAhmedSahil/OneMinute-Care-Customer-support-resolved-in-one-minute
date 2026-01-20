@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     console.log(user);
     if (!user)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
+// update
     let type: string;
     let body: any = {};
     const contentType = req.headers.get("content-type") || "";
