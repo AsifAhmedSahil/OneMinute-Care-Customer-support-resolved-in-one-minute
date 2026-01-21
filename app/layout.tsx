@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
-
+import { ToastContainer } from "react-toastify";
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -33,6 +33,16 @@ export default function RootLayout({
           </div>
         </div>
         {children}
+
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop
+          closeOnClick
+          pauseOnHover
+          theme="dark"
+        />
 
         <Script
           id="unicorn-studio"
