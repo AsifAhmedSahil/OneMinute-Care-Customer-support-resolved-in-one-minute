@@ -85,6 +85,11 @@ const page = () => {
     fetchKnowledgeSources()
   },[])
 
+  const handleSaveSection  =async () =>{
+  }
+  const handleDeleteSection  =async () =>{
+  }
+
   const handleCreateSection = async () => {
     setSelectedSection({
         id:"new",
@@ -153,6 +158,43 @@ const page = () => {
 
 
               </div>
+
+              {
+                selectedSection.id === "new" && (
+                  <div className="p-6 border-t border-white/5">
+                    <Button 
+                    className="w-full bg-white text-black hover:bg-zinc-300"
+                    onClick={handleSaveSection}
+                    disabled={isSaving}
+                    >
+                      {isSaving ? "Creating..." : "Create Section"}
+                    </Button>
+
+                  </div>
+                )
+              }
+
+              {
+                selectedSection.id !== "new" && (
+                  <div className="p-6 bg-red-500/5 border-t border-red-500/10">
+                    <h5 className="text-sm font-medium text-red-400 mb-1">
+                      Danger Zone
+                    </h5>
+                    <p className="text-xs text-red-600/700 mb-3">
+                      Deleting this section will remove all associated routing rules.
+                    </p>
+
+                      <Button 
+                    className="w-full bg-red-500/10 text-red-500 border border-red-500/70 hover:bg-red-300"
+                    onClick={handleDeleteSection}
+                    disabled={isSaving}
+                    >
+                      {isSaving ? "Deleting..." : "Delete Section"}
+                    </Button>
+
+                  </div>
+                )
+              }
             </>
           )}
         </SheetContent>
