@@ -10,7 +10,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Plus } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 type SectionStatus = "active" | "draft" | "disabled";
 type Tone = "strict" | "neutral" | "friendly" | "empathetic";
@@ -44,7 +44,7 @@ interface FormData {
   fallbackBehaviour: string;
 }
 
-const INITIAL_FORM_DATA: FormData = {
+const INITIAL_FORM_DATA: SectionFormData = {
   name: "",
   description: "",
   tone: "neutral",
@@ -65,7 +65,25 @@ const page = () => {
   const [sections, setSections] = useState<Section[]>([]);
   const [isLoadingSections, setIsLoadingSections] = useState(true);
 
-  const [formData, setFormData] = useState<FormData>(INITIAL_FORM_DATA);
+  const [formData, setFormData] = useState<SectionFormData>(INITIAL_FORM_DATA);
+
+  useEffect(()=>{
+    const fetchKnowledgeSources = async () =>{
+      try {
+        const res = await fetch("/api/knowledge/fetch");
+        const data = await res.json();
+        setKnowledgeSources(data.sources || [])
+
+      } catch (error) {
+        console.error("Failed to fetch knowledge sources:",error)
+
+        
+      }finally{
+        setIsLoadingSources(false)
+      }
+    }
+    fetchKnowledgeSources()
+  },[])
 
   const handleCreateSection = async () => {
     setSelectedSection({
@@ -122,15 +140,15 @@ const page = () => {
                 </SheetDescription>
               </SheetHeader>
 
-              <div className="flex-1 overflow-auto p-6 space-y-8">
+              <div className="flex-1 overflow-auto px-6 py-0 space-y-8">
                 <SectionFormField
                 formData={formData}
                 setFormData={setFormData}
                 selectedSources={selectedSource}
-                setSelectedSources={setSelectedSource}
+                setSelectedSource={setSelectedSource}
                 knowledgeSources={knowledgeSources}
                 isLoadingSources={isLoadingSources}
-                isDsiabled={isPreviewMode}
+                isDisabled={isPreviewMode}
                 />
 
 

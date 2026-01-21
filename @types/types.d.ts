@@ -14,7 +14,7 @@ interface KnowledgeSource {
     created_at:string|null;
 }
 
-interface FormData {
+interface SectionFormData {
   name: string;
   description: string;
   tone: Tone;
