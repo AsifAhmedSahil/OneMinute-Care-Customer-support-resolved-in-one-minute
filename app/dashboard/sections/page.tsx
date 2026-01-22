@@ -17,8 +17,6 @@ import { toast } from "react-toastify";
 type SectionStatus = "active" | "draft" | "disabled";
 type Tone = "strict" | "neutral" | "friendly" | "empathetic";
 
-
-
 interface knowledgeSource {
   id: string;
   name: string;
@@ -58,9 +56,9 @@ const page = () => {
 
   const [formData, setFormData] = useState<SectionFormData>(INITIAL_FORM_DATA);
 
-    useEffect(()=>{
-    fetchSections() 
-  },[])
+  useEffect(() => {
+    fetchSections();
+  }, []);
 
   const handleCreateSection = async () => {
     setSelectedSection({
@@ -77,19 +75,19 @@ const page = () => {
     setIsSheetOpen(true);
   };
 
-  const handlePreviewSection = async(section:Section)=>{
+  const handlePreviewSection = async (section: Section) => {
     setSelectedSection(section);
     setFormData({
-      name:section.name,
-      description:section.description,
-      tone:section.tone,
-      allowedTopics:section.allowed_topic || "",
-      blockedTopics:section.blocked_topic || "",
-      fallbackBehaviour:"escalate"
+      name: section.name,
+      description: section.description,
+      tone: section.tone,
+      allowedTopics: section.allowed_topic || "",
+      blockedTopics: section.blocked_topic || "",
+      fallbackBehaviour: "escalate",
     });
     setSelectedSource(section.source_ids || []);
     setIsSheetOpen(true);
-  }
+  };
 
   useEffect(() => {
     const fetchKnowledgeSources = async () => {
@@ -106,34 +104,30 @@ const page = () => {
     fetchKnowledgeSources();
   }, []);
 
-  const fetchSections = async()=>{
+  const fetchSections = async () => {
     try {
       setIsLoadingSections(true);
       const res = await fetch("/api/section/fetch");
       const data = await res.json();
 
-      const transformedSections: Section[] = data.map((section:any) => ({
-        id:section.id,
-        name:section.name,
-        description:section.description,
-        source_ids:section.source_ids?.length || 0,
-        tone:section.tone as Tone,
-        scopeLabel:section.allowed_topics || "General",
-        blocked_topics:section.blocked_topics,
-        status:section.status as SectionStatus,
+      const transformedSections: Section[] = data.map((section: any) => ({
+        id: section.id,
+        name: section.name,
+        description: section.description,
+        source_ids: section.source_ids?.length || 0,
+        tone: section.tone as Tone,
+        scopeLabel: section.allowed_topics || "General",
+        blocked_topics: section.blocked_topics,
+        status: section.status as SectionStatus,
+      }));
 
-      }))
-
-      setSections(transformedSections)
+      setSections(transformedSections);
     } catch (error) {
-      console.error("Failed to fetch sections:",error)
-      
-    } finally{
-      setIsLoadingSections(false)
+      console.error("Failed to fetch sections:", error);
+    } finally {
+      setIsLoadingSections(false);
     }
-  }
-
-
+  };
 
   const handleSaveSection = async () => {
     if (!formData.name.trim()) {
@@ -173,12 +167,44 @@ const page = () => {
     } catch (error) {
       console.error("Failed to save section:", error);
     } finally {
-      setIsSaving(false)
+      setIsSaving(false);
     }
   };
-  const handleDeleteSection = async () => {};
+  const handleDeleteSection = async () => {
+    if (!selectedSection || selectedSection.id === "new") return;
 
-  
+    if (
+      !confirm(
+        `Are you sure you want to delete "${selectedSection.name}"? This action will delete the section`,
+      )
+    ) {
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      const response = await fetch(`/api/section/delete`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: selectedSection.id }),
+      });
+
+      if (response.ok) {
+        toast.success("Section deleted successfully");
+      }
+
+      if (!response.ok) {
+        toast.error("Failed to delete the section");
+      }
+
+      await fetchSections();
+      setIsSheetOpen(false);
+    } catch (error) {
+      console.error("Failed to delete section", error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const isPreviewMode = selectedSection?.id !== "new";
   return (
@@ -203,10 +229,10 @@ const page = () => {
       <Card className="border-white/5 bg-[#0A0A0E]">
         <CardContent className="p-0">
           <SectionTables
-          sections={sections}
-          isLoading={isLoadingSections}
-          onPreview={handlePreviewSection}
-          onCreateSection={handleCreateSection}
+            sections={sections}
+            isLoading={isLoadingSections}
+            onPreview={handlePreviewSection}
+            onCreateSection={handleCreateSection}
           />
         </CardContent>
       </Card>
