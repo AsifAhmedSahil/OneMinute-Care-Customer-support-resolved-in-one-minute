@@ -5,7 +5,7 @@ import scalekit from "@/lib/scalekit";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
-
+// update
 export async function POST(req:NextRequest) {
     try {
         const LoggedInUser = await isAuthorized();
