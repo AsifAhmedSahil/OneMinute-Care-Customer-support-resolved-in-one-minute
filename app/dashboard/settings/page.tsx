@@ -80,7 +80,7 @@ const SettingPage = () => {
           </div>
             </div>
           <div>
-
+{/* update */}
               <TeamSection />
           </div>
         </CardContent>
