@@ -10,7 +10,7 @@ const EmbedCodeConfig = ({ chatbotId }: { chatbotId: string | undefined }) => {
   const handleCopyCode = () => {
     setCopied(true);
     navigator.clipboard.writeText(
-      `<script src="https://oneminutecare.com/widget.js" data-id="${chatbotId}" defer></script>`,
+      `<script src="http://localhost:3000/widget.js" data-id="${chatbotId}" defer></script>`,
     );
     setTimeout(() => {
       setCopied(false);
@@ -32,7 +32,7 @@ const EmbedCodeConfig = ({ chatbotId }: { chatbotId: string | undefined }) => {
           <div className="bg-[#050509] border border-white/10 rounded-xl p-4 overflow-hidden">
             <pre className="text-xs text-zinc-300 font-mono overflow-x-auto whitespace-pre rounded-lg">
               {`<script
-  src="https://oneminutecare.com/widget.js"
+  src="http://localhost:3000/widget.js"
   data-id="${chatbotId || "..."}"
   defer
 ></script>`}

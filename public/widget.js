@@ -1,10 +1,13 @@
 (function () {
   try {
+    console.log("[widget] loaded");
+
     var script = document.currentScript;
 
     if (!script) return;
 
     var widgetId = script.getAttribute("data-id");
+    console.log(widgetId)
 
     if (!widgetId) {
       console.error("[oneminute care] missing data-id");
@@ -20,19 +23,23 @@
       }),
     })
       .then(function (res) {
+        
         if (!res.ok) {
           throw new Error("Session request failed!");
         }
+
+        return res.json()
       })
-      .then(function () {
+      .then(function (data) {
+     
         if (!data || !data.token) {
           throw new Error("Invalid Session response !");
         }
 
         var iframe = document.createElement("iframe");
 
-        iframe.scr =
-          "http://localhost:3000/embed?token=" + encodeURIComponent(data.token);
+        iframe.src =
+          "http://localhost:3000/embed?token=" + encodeURIComponent(data?.token);
 
         iframe.setAttribute("title", "Support chat");
         iframe.style.position = "fixed";
@@ -46,10 +53,12 @@
         iframe.style.background = "transparent";
         iframe.style.transition = "all 0.3s ease";
 
+        console.log(iframe)
+
         document.body.appendChild(iframe);
 
         window.addEventListener("message", function (event) {
-          if (event.daat && event.data.type === "resize") {
+          if (event.data && event.data.type === "resize") {
             iframe.style.width = event.data.width;
             iframe.style.height = event.data.height;
             iframe.style.borderRadius = event.data.borderRadius || "12px";
