@@ -1,6 +1,7 @@
 "use client";
 
 import { Textarea } from "@/components/ui/textarea";
+import { knowledge_source } from "@/db/schema";
 import { cn } from "@/lib/utils";
 import {
   AlertCircle,
@@ -36,8 +37,57 @@ const EmbedPage = () => {
 
   const scrollViewportRef = useRef<HTMLDivElement>(null);
 
-  const handleSend =async () => {
-    
+  const handleSend = async () => {
+    if (!input.trim() || !token) return;
+
+    const currentSection = sections.find((s) => s.name === activeSection);
+    const sourceIds = currentSection?.source_ids || [];
+
+    const userMsg = { role: "user", content: input, section: activeSection };
+
+    setMessages((prev) => [...prev, userMsg]);
+    setInput("");
+    setIsTyping(true);
+
+    try {
+      const res = await fetch("/api/chat/public", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          messages: [...messages, userMsg],
+          knowledge_source_ids: sourceIds,
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content: data.response,
+            section: null,
+          },
+        ]);
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: "assistant",
+            content:
+              "I'm having trouble connecting right now. Please try again.",
+            setion: null,
+          },
+        ]);
+      }
+    } catch (error) {
+      console.error(error)
+    } finally{
+      setIsTyping(false)
+    }
   };
 
   /* initial iframe size */
@@ -295,7 +345,9 @@ const EmbedPage = () => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={!activeSection}
-            placeholder={activeSection ? "Type a message..." : "Select a topic above..."}
+            placeholder={
+              activeSection ? "Type a message..." : "Select a topic above..."
+            }
             className="min-h-12.5 max-h-30 pr-12 outline-none text-white bg-zinc-900/50 border-white/10 resize-none rounded-xl disabled:opacity-50 disabled:cursor-not-allowed placeholder:text-zinc-600 focus:ring-1 focus:ring-white/20"
           />
 
@@ -307,12 +359,14 @@ const EmbedPage = () => {
             <Send className="w-4 h-4 text-white" />
           </button>
         </div>
-       <div className="mt-2 text-center">
-        <Link href={"/"} className="text-[10px] text-zinc-600 font-medium hover:text-zinc-500 transition-colors  ">
-        Powered by OneMinute Care.
-        </Link>
-
-       </div>
+        <div className="mt-2 text-center">
+          <Link
+            href={"/"}
+            className="text-[10px] text-zinc-600 font-medium hover:text-zinc-500 transition-colors  "
+          >
+            Powered by OneMinute Care.
+          </Link>
+        </div>
       </div>
     </div>
   );
