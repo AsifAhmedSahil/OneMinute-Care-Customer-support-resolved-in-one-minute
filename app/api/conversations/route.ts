@@ -1,33 +1,43 @@
 import { db } from "@/db/client";
 import { chatBotMetadata, conversation, messages } from "@/db/schema";
 import { isAuthorized } from "@/lib/isAuthorized";
-import { error } from "console";
-import { desc, eq, inArray } from "drizzle-orm";
+
+import { desc, eq, inArray, or } from "drizzle-orm";
 import { NextResponse } from "next/server";
-import { isArray } from "util";
 
 export async function GET() {
   try {
     const user = await isAuthorized();
+    
     if (!user)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const bots = await db
       .select()
       .from(chatBotMetadata)
-      .where(eq(chatBotMetadata.user_email, user.email));
+      .where(eq(chatBotMetadata.user_email, user.email.toLowerCase()));
+    
+    
 
     if (bots.length === 0) {
       return NextResponse.json({ conversations: [] });
     }
 
     const botIds = bots.map((b) => b.id);
+    console.log(botIds)
 
-    const convs = await db
-      .select()
-      .from(conversation)
-      .where(inArray(conversation.chatbot_id, botIds))
-      .orderBy(desc(conversation.created_at));
+    const allConvs = await db.select().from(conversation);
+console.log("ALL CONVS:", allConvs);
+
+  const convs = await db
+  .select()
+  .from(conversation)
+  .where(
+    or(...botIds.map(id => eq(conversation.chatbot_id, id)))
+  )
+  .orderBy(desc(conversation.created_at));
+  console.log(convs)
+
 
     const data = await Promise.all(
       convs.map(async (c) => {
@@ -61,6 +71,7 @@ export async function GET() {
         }
       }),
     );
+    console.log(data)
     return NextResponse.json({conversations:data})
   } catch (error) {
     console.error("Dashboard Conversations Error:",error)
