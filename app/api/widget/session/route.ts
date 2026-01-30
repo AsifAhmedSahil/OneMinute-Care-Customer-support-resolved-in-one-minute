@@ -7,6 +7,7 @@ import { SignJWT } from "jose";
 export async function POST(req: Request) {
   try {
     const { widget_id } = await req.json();
+    console.log(widget_id)
 
     if (!widget_id) {
       return NextResponse.json({ error: "Missing widget_id" }, { status: 400 });

@@ -63,7 +63,7 @@
             iframe.style.height = event.data.height;
             iframe.style.borderRadius = event.data.borderRadius || "12px";
             if (event.data.boxShadow) {
-              iframe.body.boxShadow = event.data.boxShadow;
+              iframe.style.boxShadow = event.data.boxShadow;
             }
           }
         });

@@ -5,7 +5,7 @@ export default function Page() {
     <div>
       <Script
         src="http://localhost:3000/widget.js"
-        data-id="394ae814-4b63-4520-ae50-48c0df4cefbe"
+        data-id="dac423c0-2efe-4346-be23-144ab0a5ef2f"
         strategy="afterInteractive"
       />
     </div>
