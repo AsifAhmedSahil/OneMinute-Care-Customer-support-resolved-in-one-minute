@@ -69,7 +69,7 @@ const Integration = () => {
                     <div className="pl-4">
                         <span className="text-indigo-400">src</span>
                         <span className="text-emerald-400">
-                            &quot;https://oneminutecare.com/init.js&quot;
+                            &quot;https://one-minute-care.vercel.app/widget.js&quot;
                         </span>
 
                     </div>

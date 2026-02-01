@@ -325,7 +325,7 @@ const DashboardOverview = () => {
                 <pre className="bg-[#050509] p-4 rounded-lg text-xs text-zinc-500">
                   <code className="text-[10px] text-zinc-400 font-mono block">
                     {`<script 
-  src="http://localhost:3000/widget.js"
+  src="${origin}/widget.js"
   data-id="${data?.botId ?? "..."}"
   defer>
 </script>`}

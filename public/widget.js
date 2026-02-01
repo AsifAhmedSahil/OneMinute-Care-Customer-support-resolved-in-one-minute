@@ -14,7 +14,7 @@
       return;
     }
 
-    fetch("http://localhost:3000/api/widget/session", {
+    fetch("https://one-minute-care.vercel.app/api/widget/session", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "omit",
@@ -39,7 +39,7 @@
         var iframe = document.createElement("iframe");
 
         iframe.src =
-          "http://localhost:3000/embed?token=" + encodeURIComponent(data?.token);
+          "https://one-minute-care.vercel.app/embed?token=" + encodeURIComponent(data?.token);
 
         iframe.setAttribute("title", "Support chat");
         iframe.style.position = "fixed";
