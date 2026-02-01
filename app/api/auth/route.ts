@@ -17,6 +17,7 @@ export async function GET() {
     const options = {
       scopes: ["openid", "profile", "email", "offline_access"],
       state,
+       prompt: "login", 
     };
 
     const authorizationUrl = scalekit.getAuthorizationUrl(redirectUri, options);
