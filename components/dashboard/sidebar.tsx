@@ -11,41 +11,61 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 const SIDEBAR_ITEMS = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { label: "Knowledge", href: "/dashboard/knowledge", icon: BookOpen },
   { label: "Sections", href: "/dashboard/sections", icon: Layers },
   { label: "Chatbot", href: "/dashboard/chatbot", icon: Bot },
-  {
-    label: "Conversations",
-    href: "/dashboard/conversations",
-    icon: MessagesSquare,
-  },
+  { label: "Conversations", href: "/dashboard/conversations", icon: MessagesSquare },
   { label: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
 const Sidebar = () => {
   const pathname = usePathname();
-  const {email} = useUser()
-  const [metadata,setMetadata] = useState<any>()
-  const [isLoading,setIsLoading] = useState(true)
+  const { email } = useUser();
+  const [metadata, setMetadata] = useState<any>();
+  const [isLoading, setIsLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
-  useEffect(()=>{
-    const fetchMetadata = async()=>{
-        const response = await fetch("/api/metadata/fetch");
-        const res = await response.json()
-        setMetadata(res.data);
-        setIsLoading(false)
+  // Fetch metadata
+  useEffect(() => {
+    const fetchMetadata = async () => {
+      const response = await fetch("/api/metadata/fetch");
+      const res = await response.json();
+      setMetadata(res.data);
+      setIsLoading(false);
     };
-    fetchMetadata()
-  },[])
+    fetchMetadata();
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // ✅ Handle logout
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout"); // server deletes cookie & redirect if you prefer
+      window.location.href = "/"; // redirect to homepage
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+  };
+
   return (
     <aside className="w-64 border-r border-white/5 bg-[#050509] flex-col h-screen fixed left-0 top-0 hidden md:flex z-40">
       <div className="h-16 flex items-center px-6 border-b border-white/5 ">
         <Link href={"/"} className="flex items-center gap-2">
-          {/* logo mark */}
           <div className="w-5 h-5 bg-white rounded-sm flex items-center justify-center">
             <div className="w-2.5 h-2.5 bg-black rounded-[1px]"></div>
           </div>
@@ -76,32 +96,43 @@ const Sidebar = () => {
         })}
       </nav>
 
-      {/* profile / bottomn area */}
-
-      <div className="p-4 border-t border-white/5">
-        <div className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-white/5 cursor-pointer transition-colors group">
-        <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center border border-white/10">
+      {/* Profile / Bottom area */}
+      <div className="p-4 border-t border-white/5" ref={menuRef}>
+        <div
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-white/5 cursor-pointer transition-colors group"
+        >
+          <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center border border-white/10">
             <span className="text-xs text-zinc-400 group-hover:text-white">
-                {
-                    metadata?.business_name?.slice(0,2).toUpperCase() || ".."
-                }
-
+              {metadata?.business_name?.slice(0, 2).toUpperCase() || ".."}
             </span>
+          </div>
 
-        </div>
-
-        <div className="flex flex-col overflow-hidden">
+          <div className="flex flex-col overflow-hidden">
             <span className="text-sm font-semibold text-zinc-300 truncate group-hover:text-white">
-                {
-                    isLoading ? "Loading..." : `${metadata?.business_name}'s workspace`
-                }
+              {isLoading ? "Loading..." : `${metadata?.business_name}'s workspace`}
             </span>
-            <span className="text-xs text-zinc-500 truncate">
-                {email}
-            </span>
+            <span className="text-xs text-zinc-500 truncate">{email}</span>
+          </div>
+        </div>
 
-        </div>
-        </div>
+        {/* Dropdown menu */}
+        {menuOpen && (
+          <div className="mt-2 w-48 bg-zinc-900 rounded-md shadow-lg border border-white/10 absolute left-4 bottom-20 z-50">
+            <button
+              onClick={handleLogout}
+              className="block w-full text-left px-4 py-2 text-sm text-zinc-300 hover:bg-white/5"
+            >
+              Logout
+            </button>
+            <Link
+              href="/dashboard/settings"
+              className="block w-full text-left px-4 py-2 text-sm text-zinc-300 hover:bg-white/5"
+            >
+              Settings
+            </Link>
+          </div>
+        )}
       </div>
     </aside>
   );
