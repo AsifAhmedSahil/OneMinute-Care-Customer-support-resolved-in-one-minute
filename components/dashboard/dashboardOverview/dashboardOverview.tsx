@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import {
   ArrowRight,
   Check,
+  Copy,
   FileText,
   Globe,
   Loader2,
@@ -21,6 +22,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { setTimeout } from "timers";
 
 const DashboardOverview = () => {
   const [data, setData] = useState<any>(null);
@@ -28,12 +30,12 @@ const DashboardOverview = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [origin, setOrigin] = useState("");
 
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     setOrigin(window.location.origin);
 
-    fetch("/api/overview")
+    fetch("/api/overview", { cache: "no-store" })
       .then((res) => res.json())
       .then((d) => {
         setData(d);
@@ -45,7 +47,19 @@ const DashboardOverview = () => {
       });
   }, []);
 
-  const handleCopy = () => {};
+  const handleCopy = async () => {
+    if (!data?.botId) return;
+
+    const code = `<script src="${origin}/widget.js" data-id="${data.botId}" defer></script>`;
+
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Copy failed", err);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -58,6 +72,7 @@ const DashboardOverview = () => {
   if (!data) return null;
 
   const { knowledge, sections, chats, counts } = data;
+  console.log(chats);
 
   const setupSteps = [
     { label: "Website Scanned", complete: true, href: "#" },
@@ -116,7 +131,7 @@ const DashboardOverview = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          <Card className="border-white/5 bg-black">
+          <Card className="border-white/5 bg-[#0A0A0E]">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-base font-medium text-white">
                 Knowledge Base
@@ -151,7 +166,7 @@ const DashboardOverview = () => {
                   </span>
                 </div>
                 <span className="text-2xl font-semibold text-white">
-                  {knowledge.docs || 0}
+                  {knowledge.text || 0}
                 </span>
               </div>
 
@@ -169,7 +184,7 @@ const DashboardOverview = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-white/5 bg-black min-h-90">
+          <Card className="border-white/5 bg-[#0A0A0E] min-h-90">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <div className="space-y-1">
                 <CardTitle className="text-base font-medium text-white">
@@ -228,17 +243,107 @@ const DashboardOverview = () => {
                         </div>
 
                         <div className="col-span-1 flex justify-end">
-                            <Button variant={"ghost"} size={"icon"} className="h-6 w-6 text-zinc-500 opacity-0 group-hover:opacity-100 transition-opacity"
-                            onClick={()=>router.push("/dashboard/sections")}
-                            >
-                                <MoreHorizontal className="w-4 h-4"/>
-                            </Button>
-
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-6 w-6 text-zinc-700"
+                            onClick={() => router.push("/dashboard/sections")}
+                          >
+                            <MoreHorizontal className="w-4 h-4 text-zinc-400" />
+                          </Button>
                         </div>
                       </div>
                     ))}
                   </>
                 )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="space-y-8">
+          <Card className="border-white/5 bg-[#0A0A0E] min-h-80">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base font-medium text-white">
+                  Recents Charts
+                </CardTitle>
+
+                <Link
+                  href={"/dashboard/conversations"}
+                  className="text-xs text-zinc-500 hover:text-white transition-colors flex justify-center items-center gap-2"
+                >
+                  View all <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
+            </CardHeader>
+
+            <CardContent className="px-2 pb-2">
+              <div className="space-y-1">
+                {chats?.length === 0 ? (
+                  <div className="p-4 text-center text-xs text-zinc-500">
+                    No chats yet
+                  </div>
+                ) : (
+                  chats.map((chat: any, i: number) => (
+                    <Link
+                      key={i}
+                      href={"/dashboard/conversations"}
+                      className="block p-3 rounded-lg hover:bg-white/3 transition-colors group"
+                    >
+                      <div className="flex justify-between items-start mb-1">
+                        <span className="text-sm font-medium text-zinc-200 group-hover:text-white transition-colors">
+                          {chat.title}
+                        </span>
+                        <span className="text-[10px] text-zinc-600 whitespace-nowrap ml-2">
+                          {chat.time}
+                        </span>
+                      </div>
+
+                      <p className="text-xs text-zinc-500 line-clamp-1">
+                        {chat.snippet}
+                      </p>
+                    </Link>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="border-white/5 bg-[#0A0A0E]" id="widget">
+            <CardHeader>
+              <CardTitle className="text-base font-medium text-white">
+                Install Widget
+              </CardTitle>
+              <CardDescription>
+                Add this snippet to your website appropriate page.
+              </CardDescription>
+            </CardHeader>
+
+            <CardContent>
+              <div className="relative group">
+                <pre className="bg-[#050509] p-4 rounded-lg text-xs text-zinc-500">
+                  <code className="text-[10px] text-zinc-400 font-mono block">
+                    {`<script 
+  src="http://localhost:3000/widget.js"
+  data-id="${data?.botId ?? "..."}"
+  defer>
+</script>`}
+                  </code>
+                </pre>
+
+                <Button
+                  variant={"ghost"}
+                  size={"icon"}
+                  className="absolute top-2 right-2 h-7 w-7 bg-white/10 hover:bg-white/30 text-white border-none"
+                  onClick={handleCopy}
+                >
+                  {copied ? (
+                    <Check className="w-3 h-3" />
+                  ) : (
+                    <Copy className="w-3 h-3" />
+                  )}
+                </Button>
               </div>
             </CardContent>
           </Card>
