@@ -38,12 +38,17 @@ export async function GET() {
       total: 0,
     };
 
-    ks.forEach((k) => {
-      if (k.type === "website") knowledgeStats.website += k.count;
-      if (k.type === "text") knowledgeStats.text += k.count;
-      else knowledgeStats.upload += k.count;
-      knowledgeStats.total += k.count;
-    });
+  ks.forEach((k) => {
+  if (k.type === "website") {
+    knowledgeStats.website += k.count;
+  } else if (k.type === "text") {
+    knowledgeStats.text += k.count;
+  } else {
+    knowledgeStats.upload += k.count;
+  }
+  knowledgeStats.total += k.count;
+});
+
 
     const recentSections = await db
       .select()
@@ -70,7 +75,7 @@ export async function GET() {
 
     let totalConversations = 0;
 
-    if (botIds.length > 0) {
+   if (botIds && botIds.length > 0) {
       const rawConvs = await db
         .select()
         .from(conversation)
