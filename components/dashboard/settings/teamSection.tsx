@@ -24,6 +24,7 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 import { id } from "date-fns/locale";
 import { Plus } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 interface TeamMember {
   id: string;
@@ -69,6 +70,14 @@ const TeamSection = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: newMemberEmail, name: newMemberName }),
       });
+
+      
+    const data = await res.json();
+    console.log(data)
+
+      if (!res.ok) {
+  toast.error(data.error || "User Already sending email");
+}
 
       if (res.ok) {
         setNewMemberEmail("");
