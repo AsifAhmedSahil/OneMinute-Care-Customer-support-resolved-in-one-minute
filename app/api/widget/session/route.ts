@@ -37,10 +37,24 @@ export async function POST(req: Request) {
       .setExpirationTime("2h")
       .sign(secret);
 
-    return NextResponse.json({token})
-
+    const response = NextResponse.json({token})
+    response.headers.set("Access-Control-Allow-Origin","*");
+    return response;
   } catch (error) {
     console.error(error)
      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
+}
+
+
+export async function OPTIONS(){
+  return new NextResponse(null,{
+    status:204,
+    headers:{
+      "Access-Control-Allow-Origin":"*",
+      "Access-Control-Allow-Methods":"POST,OPTIONS",
+      "Access-Control-Allow-Headers":"Content-Type,Authorization",
+
+    }
+  })
 }

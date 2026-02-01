@@ -3,11 +3,7 @@ import Script from "next/script";
 export default function Page() {
   return (
     <div>
-      <Script
-        src="http://localhost:3000/widget.js"
-        data-id="dac423c0-2efe-4346-be23-144ab0a5ef2f"
-        strategy="afterInteractive"
-      />
+      <Script src="https://one-minute-care.vercel.app/widget.js" data-id="1adfcc47-88c8-4baf-87c0-5f225365669b" defer></Script>
     </div>
   );
 }
